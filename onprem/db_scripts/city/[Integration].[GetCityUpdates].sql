@@ -180,7 +180,7 @@ BEGIN
                                                         AND cc2.[Valid From] > cc.[Valid From]), @EndOfTime)
     FROM #CityChanges AS cc;
 
-    SELECT TOP 100 [WWI City ID], City, [State Province], Country, Continent, [Sales Territory],
+    SELECT [WWI City ID], City, [State Province], Country, Continent, [Sales Territory],
            Region, Subregion,
 		   --[Location] geography,
 		    [Latest Recorded Population], [Valid From],

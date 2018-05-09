@@ -1,5 +1,6 @@
 EXEC [dbo].[CreateTable] 'Dimension', 'StockItem',
 N'
+  [Stock Item Key] INT IDENTITY(1,1) NOT NULL,
   [WWI Stock Item ID] int,
   [Stock Item] nvarchar(100),
   [Color] nvarchar(20),

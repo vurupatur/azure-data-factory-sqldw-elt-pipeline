@@ -1,5 +1,6 @@
 EXEC [dbo].[CreateTable] 'Dimension', 'Employee',
 N'
+  [Employee Key] INT IDENTITY(1,1) NOT NULL,
   [WWI Employee ID] int,
   [Employee] nvarchar(50),
   [Preferred Name] nvarchar(50),

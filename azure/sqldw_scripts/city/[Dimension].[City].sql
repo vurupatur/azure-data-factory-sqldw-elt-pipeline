@@ -1,5 +1,6 @@
 EXEC [dbo].[CreateTable] 'Dimension', 'City',
 N'
+  [City Key] INT IDENTITY(1,1) NOT NULL,
   [WWI City ID] int,
   [City] nvarchar(50),
   [State Province] nvarchar(50),

@@ -1,5 +1,6 @@
 EXEC [dbo].[CreateTable] 'Dimension', 'Customer',
 N'
+  [Customer Key] INT IDENTITY(1,1) NOT NULL,
   [WWI Customer ID] int,
   [Customer] nvarchar(100),
   [Bill To Customer] nvarchar(100),
