@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "value": "refdataarch2-adf"
+        },
+        "linkedService1_connectionString": {
+            "value": ""
+        },
+        "SourceSqlDataBase_connectionString": {
+            "value": ""
+        },
+        "SqlDWDeliveryMethodsLinkedService_connectionString": {
+            "value": ""
+        },
+        "refdataarch2storage_connectionString": {
+            "value": ""
+        },
+        "SourceSqlDataBase_properties_typeProperties_userName": {
+            "value": "PnpUser"
+        }
+    }
+}
