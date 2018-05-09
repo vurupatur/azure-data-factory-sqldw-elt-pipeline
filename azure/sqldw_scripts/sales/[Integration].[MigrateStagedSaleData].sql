@@ -17,50 +17,123 @@ BEGIN
   AND DataLoadEndTime IS NULL
   ORDER BY DataLoadStartTime DESC
 
-  UPDATE [Integration].[Sale_Staging]
-  SET [WWI City ID] = COALESCE((SELECT TOP(1) c.[WWI City ID]
-                                FROM [Dimension].[City] AS c
-                                INNER JOIN [Integration].[Sale_Staging] s1
-                                ON c.[WWI City ID] = s1.[WWI City ID]
-                                AND s1.[Last Modified When] > c.[Valid From]
-                                AND s1.[Last Modified When] <= c.[Valid To]
-                                ORDER BY c.[Valid From]), 0)
 
-  UPDATE [Integration].[Sale_Staging]
-  SET [WWI Customer ID] = COALESCE((SELECT TOP(1) c.[WWI Customer ID]
-                                    FROM [Dimension].[Customer] AS c
-                                    INNER JOIN [Integration].Sale_Staging s1
-                                    ON c.[WWI Customer ID] = s1.[WWI Customer ID]
-                                    AND s1.[Last Modified When] > c.[Valid From]
-                                    AND s1.[Last Modified When] <= c.[Valid To]
-                                    ORDER BY c.[Valid From]), 0)
+	CREATE TABLE CityHolder
+	WITH (HEAP , DISTRIBUTION = HASH([WWI City ID]))
+	AS
 
-  UPDATE [Integration].[Sale_Staging]
-  SET [WWI Bill To Customer ID] = COALESCE((SELECT TOP(1) c.[WWI Customer ID]
-                                            FROM [Dimension].[Customer] AS c
-                                            INNER JOIN [Integration].[Sale_Staging] s
-                                            ON c.[WWI Customer ID] = s.[WWI Bill To Customer ID]
-                                            AND s.[Last Modified When] > c.[Valid From]
-                                            AND s.[Last Modified When] <= c.[Valid To]
-                                            ORDER BY c.[Valid From]), 0)
+	SELECT c.[WWI City ID],c.[Valid From],s1.[WWI Invoice ID],ROW_NUMBER() OVER (PARTITION BY c.[WWI City ID],s1.[WWI Invoice ID] ORDER BY c.[Valid From] DESC) as rn
+	FROM [Dimension].[City] AS c
+	INNER JOIN [Integration].[Sale_Staging] s1
+	ON c.[WWI City ID] = s1.[WWI City ID]
+	AND s1.[Last Modified When] > c.[Valid From]
+	AND s1.[Last Modified When] <= c.[Valid To]
 
-  UPDATE [Integration].[Sale_Staging]
-  SET [WWI Stock Item ID] = COALESCE((SELECT TOP(1) si.[WWI Stock Item ID]
-                                      FROM [Dimension].[StockItem] AS si
-                                      INNER JOIN [Integration].[Sale_Staging] s
-                                      ON si.[WWI Stock Item ID] = s.[WWI Stock Item ID]
-                                      AND s.[Last Modified When] > si.[Valid From]
-                                      AND s.[Last Modified When] <= si.[Valid To]
-                                      ORDER BY si.[Valid From]), 0)
 
-  UPDATE [Integration].[Sale_Staging]
-  SET [WWI Saleperson ID] = COALESCE((SELECT TOP(1) e.[WWI Employee ID]
-                                      FROM [Dimension].[Employee] AS e
-                                      INNER JOIN [Integration].[Sale_Staging] s
-                                      ON e.[WWI Employee ID] = s.[WWI Saleperson ID]
-                                      AND s.[Last Modified When] > e.[Valid From]
-                                      AND s.[Last Modified When] <= e.[Valid To]
-                                      ORDER BY e.[Valid From]), 0)
+
+	UPDATE [Integration].[Sale_Staging]
+	SET [Integration].[Sale_Staging].[WWI City ID] =  CityHolder.[WWI City ID]
+	FROM CityHolder
+	WHERE CityHolder.rn = 1
+	AND [Integration].[Sale_Staging].[WWI Invoice ID] = CityHolder.[WWI Invoice ID]
+	AND [Integration].[Sale_Staging].[Last Modified When] >= CityHolder.[Valid From]
+
+
+
+	DROP TABLE CityHolder
+
+	CREATE TABLE CustomerHolder
+	WITH (HEAP , DISTRIBUTION = HASH([WWI Customer ID]))
+	AS
+
+	SELECT c.[WWI Customer ID],c.[Valid From],s1.[WWI Invoice ID],ROW_NUMBER() OVER (PARTITION BY c.[WWI Customer ID],s1.[WWI Invoice ID] ORDER BY c.[Valid From] DESC) as rn
+	FROM [Dimension].[Customer] AS c
+	INNER JOIN [Integration].[Sale_Staging] s1
+	ON c.[WWI Customer ID] = s1.[WWI Customer ID]
+	AND s1.[Last Modified When] > c.[Valid From]
+	AND s1.[Last Modified When] <= c.[Valid To]
+
+
+
+	UPDATE [Integration].[Sale_Staging]
+	SET [Integration].[Sale_Staging].[WWI Customer ID] =  CustomerHolder.[WWI Customer ID]
+	FROM CustomerHolder
+	WHERE CustomerHolder.rn = 1
+	AND [Integration].[Sale_Staging].[WWI Invoice ID] = CustomerHolder.[WWI Invoice ID]
+	AND [Integration].[Sale_Staging].[Last Modified When] >= CustomerHolder.[Valid From]
+
+	DROP TABLE CustomerHolder
+
+
+	CREATE TABLE BillToCustomerHolder
+	WITH (HEAP , DISTRIBUTION = HASH([WWI Customer ID]))
+	AS
+
+	SELECT c.[WWI Customer ID],c.[Valid From],s1.[WWI Invoice ID],ROW_NUMBER() OVER (PARTITION BY c.[WWI Customer ID],s1.[WWI Invoice ID] ORDER BY c.[Valid From] DESC) as rn
+	FROM [Dimension].[Customer] AS c
+	INNER JOIN [Integration].[Sale_Staging] s1
+	ON c.[WWI Customer ID] = s1.[WWI Bill To Customer ID]
+	AND s1.[Last Modified When] > c.[Valid From]
+	AND s1.[Last Modified When] <= c.[Valid To]
+
+
+
+	UPDATE [Integration].[Sale_Staging]
+	SET [Integration].[Sale_Staging].[WWI Bill To Customer ID] =  BillToCustomerHolder.[WWI Customer ID]
+	FROM BillToCustomerHolder
+	WHERE BillToCustomerHolder.rn = 1
+	AND [Integration].[Sale_Staging].[WWI Invoice ID] = BillToCustomerHolder.[WWI Invoice ID]
+	AND [Integration].[Sale_Staging].[Last Modified When] >= BillToCustomerHolder.[Valid From]
+
+	DROP TABLE BillToCustomerHolder
+
+
+	CREATE TABLE StockItemHolder
+	WITH (HEAP , DISTRIBUTION = HASH([WWI Stock Item ID]))
+	AS
+
+	SELECT c.[WWI Stock Item ID],c.[Valid From],s1.[WWI Invoice ID],ROW_NUMBER() OVER (PARTITION BY c.[WWI Stock Item ID],s1.[WWI Invoice ID] ORDER BY c.[Valid From] DESC) as rn
+	FROM [Dimension].[StockItem] AS c
+	INNER JOIN [Integration].[Sale_Staging] s1
+	ON c.[WWI Stock Item ID] = s1.[WWI Stock Item ID]
+	AND s1.[Last Modified When] > c.[Valid From]
+	AND s1.[Last Modified When] <= c.[Valid To]
+
+
+
+	UPDATE [Integration].[Sale_Staging]
+	SET [Integration].[Sale_Staging].[WWI Stock Item ID] =  StockItemHolder.[WWI Stock Item ID]
+	FROM StockItemHolder
+	WHERE StockItemHolder.rn = 1
+	AND [Integration].[Sale_Staging].[WWI Invoice ID] = StockItemHolder.[WWI Invoice ID]
+	AND [Integration].[Sale_Staging].[Last Modified When] >= StockItemHolder.[Valid From]
+
+	DROP TABLE StockItemHolder
+
+
+	
+	CREATE TABLE EmployeeHolder
+	WITH (HEAP , DISTRIBUTION = HASH([WWI Employee ID]))
+	AS
+
+	SELECT c.[WWI Employee ID],c.[Valid From],s1.[WWI Invoice ID],ROW_NUMBER() OVER (PARTITION BY c.[WWI Employee ID],s1.[WWI Invoice ID] ORDER BY c.[Valid From] DESC) as rn
+	FROM [Dimension].[Employee] AS c
+	INNER JOIN [Integration].[Sale_Staging] s1
+	ON c.[WWI Employee ID] = s1.[WWI Saleperson ID]
+	AND s1.[Last Modified When] > c.[Valid From]
+	AND s1.[Last Modified When] <= c.[Valid To]
+
+
+
+	UPDATE [Integration].[Sale_Staging]
+	SET [Integration].[Sale_Staging].[WWI Saleperson ID] =  EmployeeHolder.[WWI Employee ID]
+	FROM EmployeeHolder
+	WHERE EmployeeHolder.rn = 1
+	AND [Integration].[Sale_Staging].[WWI Invoice ID] = EmployeeHolder.[WWI Invoice ID]
+	AND [Integration].[Sale_Staging].[Last Modified When] >= EmployeeHolder.[Valid From]
+
+	DROP TABLE EmployeeHolder
+
 
   DELETE FROM [Fact].[Sale]
   WHERE [WWI Invoice ID] IN (SELECT [WWI Invoice ID] FROM [Integration].[Sale_Staging])
@@ -88,7 +161,7 @@ BEGIN
     [Last Modified When],
     [Lineage Key]
   )
-  SELECT
+  SELECT 
   [Invoice Date Key],
   [Delivery Date Key],
   [WWI Invoice ID],
