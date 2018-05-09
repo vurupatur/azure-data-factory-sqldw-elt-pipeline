@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate MOF",
+            "type": "shell",
+            "windows": {
+                "command": "${fileDirname}\\Generate-MOF.ps1 -DscScript ${file}",
+                "options": {
+                    "cwd": "${fileDirname}"
+                },
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
