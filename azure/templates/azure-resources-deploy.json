@@ -1,0 +1,154 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dwServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "SQL Data Warehouse Name"
+                }
+
+        },
+        "dwAdminLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "Datawarehouse SQL server admin user"
+                }
+
+        },
+        "dwAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Datawarehouse SQL server admin password"
+                }
+        },
+        "dwPerformanceTier": {
+            "type": "string",
+            "defaultValue": "DW400",
+            "metadata": {
+                "description": "Performance Tier"
+                }
+
+        },
+        "storageAccountName": {
+            "type":"string",
+            "maxLength": 24,
+            "minLength": 3,
+            "metadata": {
+                "description": "Storage account for storing BCP output CSV files"
+            }
+        },
+        "analysisServerName": {
+            "type":"string",
+            "metadata": {
+                "description": "Analysis Server Name"
+            }
+        },
+        "analysisServerSKU": {
+            "type":"string",
+            "defaultValue": "D1",
+            "metadata": {
+                "description": "Analysis Server Name"
+            }
+        },
+        "analysisServerAdmin":{
+            "type":"string",
+            "metadata": {
+                "description": "User principal name for an actual account in active directory"
+            }
+        }
+    },
+    "variables": {
+        "version": "12.0",
+        "dwDatabaseName": "wwi",
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "deploymentLocation": "[resourceGroup().location]"
+    },
+    "resources": [
+        {
+            "name":"[parameters('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2017-10-01",
+            "sku": {
+              "name": "Standard_RAGRS"
+            },
+            "kind": "BlobStorage",
+            "location": "[variables('deploymentLocation')]",
+            "tags": {},
+            "properties": {
+              "accessTier": "Hot",
+              "supportsHttpsTrafficOnly": true,
+              "encryption":{
+                "services":{
+                  "blob":{
+                    "enabled":true
+                  }
+                },
+                "keySource":"Microsoft.Storage"
+              }
+            },
+            "dependsOn": [],
+            "identity": {
+                "type": "systemAssigned"
+            }
+        },
+        {
+            "apiVersion": "2014-04-01-preview",
+            "location": "[variables('deploymentLocation')]",
+            "name": "[parameters('dwServerName')]",
+            "properties": {
+                "administratorLogin": "[parameters('dwAdminLogin')]",
+                "administratorLoginPassword": "[parameters('dwAdminPassword')]",
+                "version": "[variables('version')]"
+            },
+            "resources": [
+                {
+                    "apiVersion": "2014-04-01-preview",
+                    "dependsOn": [
+                        "[parameters('dwServerName')]"
+                    ],
+                    "location": "[variables('deploymentLocation')]",
+                    "name": "[variables('dwDatabaseName')]",
+                    "properties": {
+                        "edition": "DataWarehouse",
+                        "requestedServiceObjectiveName": "[parameters('dwPerformanceTier')]",
+                        "collation": "[variables('collation')]"
+                    },
+                    "type": "databases"
+                },
+                {
+                    "apiVersion": "2014-04-01-preview",
+                    "dependsOn": [
+                        "[parameters('dwServerName')]"
+                    ],
+                    "location": "[variables('deploymentLocation')]",
+                    "name": "AllowAllWindowsAzureIps",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    },
+                    "type": "firewallrules"
+                }
+            ],
+            "type": "Microsoft.Sql/servers"
+        },
+        {
+            "name": "[parameters('analysisServerName')]",
+            "type": "Microsoft.AnalysisServices/servers",
+            "apiVersion": "2017-08-01",
+            "location": "[variables('deploymentLocation')]",
+            "sku": {
+              "name": "[parameters('analysisServerSKU')]"
+            },
+            "tags": {},
+            "properties": {
+              "asAdministrators": {
+                "members": [
+                  "[parameters('analysisServerAdmin')]"
+                ]
+              }
+            }
+          }
+    ],
+    "outputs": {}
+}
