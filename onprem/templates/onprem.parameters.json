@@ -1,0 +1,129 @@
+{
+    "$schema": "https://raw.githubusercontent.com/mspnp/template-building-blocks/master/schemas/buildingBlocks.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "buildingBlocks": {
+            "value": [
+                {
+                    "type": "VirtualNetwork",
+                    "settings": [
+                        {
+                            "name": "ra-bi-onprem-vnet",
+                            "addressPrefixes": [
+                                "10.0.0.0/16"
+                            ],
+                            "subnets": [
+                                {
+                                    "name": "sql",
+                                    "addressPrefix": "10.0.1.0/24"
+                                }
+                            ],
+                            "dnsServers": []
+                        }
+                    ]
+                },
+                {
+                    "type": "VirtualMachine",
+                    "settings": {
+                        "vmCount": 1,
+                        "namePrefix": "sql",
+                        "size": "Standard_DS3_v2",
+                        "computerNamePrefix": "sql",
+                        "adminUsername": "adminUser",
+                        "adminPassword": "testPassw0rd!23",
+                        "osType": "windows",
+                        "imageReference": {
+                            "publisher": "MicrosoftSQLServer",
+                            "offer": "SQL2017-WS2016",
+                            "sku": "Enterprise",
+                            "version": "latest"
+                        },
+                        "dataDisks": {
+                            "count": 2,
+                            "diskSizeGB": 1000
+                        },
+                        "virtualNetwork": {
+                            "name": "ra-bi-onprem-vnet"
+                        },
+                        "nics": [
+                            {
+                                "isPrimary": true,
+                                "isPublic": true,
+                                "subnetName": "sql",
+                                "privateIPAllocationMethod": "Dynamic",
+                                "dnsServers": []
+                            }
+                        ],
+                        "extensions": [
+                            {
+                                "name": "SqlExt",
+                                "type": "SqlIaaSAgent",
+                                "publisher": "Microsoft.SqlServer.Management",
+                                "typeHandlerVersion": "1.2",
+                                "autoUpgradeMinorVersion": true,
+                                "settings": {
+                                    "AutoTelemetrySettings": {
+                                        "Region": "Central US"
+                                    },
+                                    "AutoPatchingSettings": {
+                                        "PatchCategory": "WindowsMandatoryUpdates",
+                                        "Enable": true,
+                                        "DayOfWeek": "Sunday",
+                                        "MaintenanceWindowStartingHour": "2",
+                                        "MaintenanceWindowDuration": "60"
+                                    },
+                                    "KeyVaultCredentialSettings": {
+                                        "Enable": false,
+                                        "CredentialName": ""
+                                    },
+                                    "ServerConfigurationsManagementSettings": {
+                                        "SQLConnectivityUpdateSettings": {
+                                            "ConnectivityType": "Private",
+                                            "Port": 1433
+                                        },
+                                        "SQLWorkloadTypeUpdateSettings": {
+                                            "SQLWorkloadType": "GENERAL"
+                                        },
+                                        "SQLStorageUpdateSettings": {
+                                            "DiskCount": 1,
+                                            "NumberOfColumns": 1,
+                                            "StartingDeviceID": 2,
+                                            "DiskConfigurationType": "NEW"
+                                        },
+                                        "AdditionalFeaturesServerConfigurations": {
+                                            "IsRServicesEnabled": "false"
+                                        }
+                                    }
+                                },
+                                "protectedSettings": {}
+                            },
+                            {
+                                "name": "SetupServer",
+                                "publisher": "Microsoft.Powershell",
+                                "type": "DSC",
+                                "typeHandlerVersion": "2.7",
+                                "autoUpgradeMinorVersion": true,
+                                "settings": {
+                                    "configuration": {
+                                        "url": "https://github.com/mspnp/reference-architectures/blob/master/data/enterprise_bi_sqldw_advanced/onprem/dsc/Provision_OnPrem.ps1.zip?raw=true",
+                                        "script": "Provision_OnPrem.ps1",
+                                        "function": "Provision_OnPrem"
+                                    }
+                                },
+                                "protectedSettings": {
+                                    "configurationArguments": {
+                                        "SqlUserCredentials": {
+                                          "userName": ".\\adminUser",
+                                          "password": "testPassw0rd!23"
+                                        },
+                                        "IntegrationRuntimeGatewayKey": "IR@f598f095-fdfc-4c74-9d44-f78739768f34@pnp-sql-adf2@eu@hPgggjWKwyqBTMgDOsh1e1tuWbYNGc2uuJQvYmolReY="
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}
