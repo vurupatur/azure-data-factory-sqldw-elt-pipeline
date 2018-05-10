@@ -7,10 +7,6 @@
             "metadata": "Data Factory Name",
             "defaultValue": "refdataarch2-adf"
         },
-        "linkedService1_connectionString": {
-            "type": "secureString",
-            "metadata": "Secure string for 'connectionString' of 'linkedService1'"
-        },
         "SourceSqlDataBase_connectionString": {
             "type": "secureString",
             "metadata": "Secure string for 'connectionString' of 'SourceSqlDataBase'"
@@ -100,31 +96,6 @@
             "dependsOn": [
                 "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
             ]
-        },
-        {
-            "name": "[concat(parameters('factoryName'), '/linkedService1')]",
-            "type": "Microsoft.DataFactory/factories/linkedServices",
-            "apiVersion": "2017-09-01-preview",
-            "properties": {
-                "type": "AzureSqlDW",
-                "typeProperties": {
-                    "connectionString": {
-                        "type": "SecureString",
-                        "value": "[parameters('linkedService1_connectionString')]"
-                    }
-                }
-            },
-            "dependsOn": []
-        },
-        {
-            "name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
-            "type": "Microsoft.DataFactory/factories/integrationRuntimes",
-            "apiVersion": "2017-09-01-preview",
-            "properties": {
-                "type": "SelfHosted",
-                "typeProperties": {}
-            },
-            "dependsOn": []
         },
         {
             "name": "[concat(parameters('factoryName'), '/SalesPipeline')]",
@@ -1580,7 +1551,7 @@
             "properties": {
                 "activities": [
                     {
-                        "name": "Sales Pipeline",
+                        "name": "SalesPipeline",
                         "type": "ExecutePipeline",
                         "dependsOn": [
                             {
@@ -1652,7 +1623,7 @@
                         }
                     },
                     {
-                        "name": "Customer Pipeline",
+                        "name": "CustomerPipeline",
                         "type": "ExecutePipeline",
                         "dependsOn": [
                             {
@@ -1677,7 +1648,7 @@
                         }
                     },
                     {
-                        "name": "Employee Pipeline",
+                        "name": "EmployeePipeline",
                         "type": "ExecutePipeline",
                         "dependsOn": [
                             {
@@ -1702,7 +1673,7 @@
                         }
                     },
                     {
-                        "name": "Stock Item Pipeline",
+                        "name": "StockItemsPipeline",
                         "type": "ExecutePipeline",
                         "dependsOn": [
                             {
@@ -1790,104 +1761,6 @@
             },
             "dependsOn": [
                 "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
-            ]
-        },
-        {
-            "name": "[concat(parameters('factoryName'), '/WaterMark')]",
-            "type": "Microsoft.DataFactory/factories/datasets",
-            "apiVersion": "2017-09-01-preview",
-            "properties": {
-                "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
-                    "type": "LinkedServiceReference"
-                },
-                "type": "SqlServerTable",
-                "typeProperties": {
-                    "tableName": "[concat(variables('leftBracket'), 'Integration].[WaterMark]')]"
-                }
-            },
-            "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
-            ]
-        },
-        {
-            "name": "[concat(parameters('factoryName'), '/SqlDWDeliveryMethods')]",
-            "type": "Microsoft.DataFactory/factories/datasets",
-            "apiVersion": "2017-09-01-preview",
-            "properties": {
-                "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
-                    "type": "LinkedServiceReference"
-                },
-                "type": "AzureSqlDWTable",
-                "structure": [
-                    {
-                        "name": "DeliveryMethodID",
-                        "type": "Int32"
-                    },
-                    {
-                        "name": "DeliveryMethodName",
-                        "type": "String"
-                    },
-                    {
-                        "name": "LastEditedBy",
-                        "type": "Int32"
-                    },
-                    {
-                        "name": "ValidFrom",
-                        "type": "DateTime"
-                    },
-                    {
-                        "name": "ValidTo",
-                        "type": "DateTime"
-                    }
-                ],
-                "typeProperties": {
-                    "tableName": "[concat(variables('leftBracket'), 'stg].[Application_DeliveryMethods]')]"
-                }
-            },
-            "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
-            ]
-        },
-        {
-            "name": "[concat(parameters('factoryName'), '/DeliveryMethods')]",
-            "type": "Microsoft.DataFactory/factories/datasets",
-            "apiVersion": "2017-09-01-preview",
-            "properties": {
-                "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
-                    "type": "LinkedServiceReference"
-                },
-                "type": "SqlServerTable",
-                "structure": [
-                    {
-                        "name": "DeliveryMethodID",
-                        "type": "Int32"
-                    },
-                    {
-                        "name": "DeliveryMethodName",
-                        "type": "String"
-                    },
-                    {
-                        "name": "LastEditedBy",
-                        "type": "Int32"
-                    },
-                    {
-                        "name": "ValidFrom",
-                        "type": "DateTime"
-                    },
-                    {
-                        "name": "ValidTo",
-                        "type": "DateTime"
-                    }
-                ],
-                "typeProperties": {
-                    "tableName": "[concat(variables('leftBracket'), 'Application].[DeliveryMethods]')]"
-                }
-            },
-            "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
             ]
         },
         {
@@ -2890,16 +2763,6 @@
             "properties": {
                 "type": "SelfHosted",
                 "description": "selfhosted run time for refdataarch2-adf",
-                "typeProperties": {}
-            },
-            "dependsOn": []
-        },
-        {
-            "name": "[concat(parameters('factoryName'), '/SelfHostedIntegrationRunTime')]",
-            "type": "Microsoft.DataFactory/factories/integrationRuntimes",
-            "apiVersion": "2017-09-01-preview",
-            "properties": {
-                "type": "SelfHosted",
                 "typeProperties": {}
             },
             "dependsOn": []

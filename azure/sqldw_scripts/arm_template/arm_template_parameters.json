@@ -5,9 +5,6 @@
         "factoryName": {
             "value": "refdataarch2-adf"
         },
-        "linkedService1_connectionString": {
-            "value": ""
-        },
         "SourceSqlDataBase_connectionString": {
             "value": ""
         },
