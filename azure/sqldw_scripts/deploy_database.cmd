@@ -29,8 +29,6 @@ sqlcmd %* -b -i "city\[Integration].[CityLocation_Staging].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "city\[Integration].[City_Staging].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
-sqlcmd %* -b -i "city\[Integration].[GetLocationInlined].sql"
-IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "city\[Integration].[MergeLocation].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "city\[Integration].[MigrateStagedCityData].sql"
@@ -51,8 +49,6 @@ sqlcmd %* -b -i "employees\[Integration].[EmployeePhoto_Staging].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "employees\[Integration].[Employee_Staging].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
-sqlcmd %* -b -i "employees\[Integration].[GetEmployeePhotoInlined].sql"
-IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "employees\[Integration].[MergeEmployeePhoto].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "employees\[Integration].[MigrateStagedEmployeeData].sql"
@@ -64,8 +60,6 @@ IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "stockitems\[Integration].[StockItem_Staging].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "stockitems\[Integration].[StockItemPhoto_Staging].sql"
-IF %ERRORLEVEL% NEQ 0 EXIT /B 1
-sqlcmd %* -b -i "stockitems\[Integration].[GetStockItemPhotoInlined].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "stockitems\[Integration].[MergeStockItemPhoto].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
