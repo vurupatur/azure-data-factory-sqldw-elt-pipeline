@@ -83,7 +83,7 @@ sqlcmd %* -b -i "citypopulation\[Fact].[CityPopulation].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "citypopulation\[Integration].[MigrateExternalCityPopulationData].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
-sqlcmd %* -b -i "citypopulation\[Integration].[MigrateStagedEmployeeData].sql"
+sqlcmd %* -b -i "citypopulation\[Integration].[MigrateStagedPopulationData].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 
 
