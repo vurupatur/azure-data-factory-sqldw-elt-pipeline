@@ -4,22 +4,21 @@
     "parameters": {
         "factoryName": {
             "type": "string",
-            "metadata": "Data Factory Name",
-            "defaultValue": "refdataarch2-adf"
+            "metadata": "Data Factory Name"
         },
-        "SourceSqlDataBase_connectionString": {
+        "sourceDBConnectionString": {
             "type": "secureString",
-            "metadata": "Secure string for 'connectionString' of 'SourceSqlDataBase'"
+            "metadata": "Secure string for 'connectionString' of 'sourceDBLinkedService'"
         },
-        "SqlDWDeliveryMethodsLinkedService_connectionString": {
+        "sinkDWConnectionString": {
             "type": "secureString",
-            "metadata": "Secure string for 'connectionString' of 'SqlDWDeliveryMethodsLinkedService'"
+            "metadata": "Secure string for 'connectionString' of 'sinkDWLinkedService'"
         },
-        "refdataarch2storage_connectionString": {
+        "blobConnectionString": {
             "type": "secureString",
-            "metadata": "Secure string for 'connectionString' of 'refdataarch2storage'"
+            "metadata": "Secure string for 'connectionString' of 'blobLinkedService'"
         },
-        "SourceSqlDataBase_properties_typeProperties_userName": {
+        "sourceDBUserName": {
             "type": "string",
             "defaultValue": "PnpUser"
         }
@@ -35,7 +34,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -54,7 +53,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -63,7 +62,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -94,7 +93,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -166,7 +165,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -250,7 +249,7 @@
                             "enableStaging": true,
                             "stagingSettings": {
                                 "linkedServiceName": {
-                                    "referenceName": "refdataarch2storage",
+                                    "referenceName": "blobLinkedService",
                                     "type": "LinkedServiceReference"
                                 },
                                 "path": "adf-copy"
@@ -302,7 +301,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     }
@@ -315,11 +314,11 @@
             },
             "dependsOn": [
                 "[concat(variables('factoryId'), '/datasets/ETLCutoff')]",
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]",
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]",
                 "[concat(variables('factoryId'), '/datasets/Lineage')]",
                 "[concat(variables('factoryId'), '/datasets/SalesChanges')]",
                 "[concat(variables('factoryId'), '/datasets/SalesChangesDW')]",
-                "[concat(variables('factoryId'), '/linkedServices/refdataarch2storage')]"
+                "[concat(variables('factoryId'), '/linkedServices/blobLinkedService')]"
             ]
         },
         {
@@ -391,7 +390,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -475,7 +474,7 @@
                             "enableStaging": true,
                             "stagingSettings": {
                                 "linkedServiceName": {
-                                    "referenceName": "refdataarch2storage",
+                                    "referenceName": "blobLinkedService",
                                     "type": "LinkedServiceReference"
                                 },
                                 "path": "adf-copy"
@@ -527,7 +526,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -582,7 +581,7 @@
                             "enableStaging": true,
                             "stagingSettings": {
                                 "linkedServiceName": {
-                                    "referenceName": "refdataarch2storage",
+                                    "referenceName": "blobLinkedService",
                                     "type": "LinkedServiceReference"
                                 },
                                 "path": "adf-copy"
@@ -631,7 +630,7 @@
                             "storedProcedureName": "[concat(variables('leftBracket'), 'integration].[MergeLocation]')]"
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     }
@@ -644,13 +643,13 @@
             },
             "dependsOn": [
                 "[concat(variables('factoryId'), '/datasets/ETLCutoff')]",
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]",
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]",
                 "[concat(variables('factoryId'), '/datasets/Lineage')]",
                 "[concat(variables('factoryId'), '/datasets/CityChanges')]",
                 "[concat(variables('factoryId'), '/datasets/CityChangesDW')]",
                 "[concat(variables('factoryId'), '/datasets/CityLocationChanges')]",
                 "[concat(variables('factoryId'), '/datasets/CityLocationChangesDW')]",
-                "[concat(variables('factoryId'), '/linkedServices/refdataarch2storage')]"
+                "[concat(variables('factoryId'), '/linkedServices/blobLinkedService')]"
             ]
         },
         {
@@ -722,7 +721,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -806,7 +805,7 @@
                             "enableStaging": true,
                             "stagingSettings": {
                                 "linkedServiceName": {
-                                    "referenceName": "refdataarch2storage",
+                                    "referenceName": "blobLinkedService",
                                     "type": "LinkedServiceReference"
                                 },
                                 "path": "adf-copy"
@@ -862,7 +861,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     }
@@ -875,11 +874,11 @@
             },
             "dependsOn": [
                 "[concat(variables('factoryId'), '/datasets/ETLCutoff')]",
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]",
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]",
                 "[concat(variables('factoryId'), '/datasets/Lineage')]",
                 "[concat(variables('factoryId'), '/datasets/CustomerChanges')]",
                 "[concat(variables('factoryId'), '/datasets/CustomerChangesDW')]",
-                "[concat(variables('factoryId'), '/linkedServices/refdataarch2storage')]"
+                "[concat(variables('factoryId'), '/linkedServices/blobLinkedService')]"
             ]
         },
         {
@@ -951,7 +950,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -1035,7 +1034,7 @@
                             "enableStaging": true,
                             "stagingSettings": {
                                 "linkedServiceName": {
-                                    "referenceName": "refdataarch2storage",
+                                    "referenceName": "blobLinkedService",
                                     "type": "LinkedServiceReference"
                                 },
                                 "path": "adf-copy"
@@ -1087,7 +1086,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -1142,7 +1141,7 @@
                             "enableStaging": true,
                             "stagingSettings": {
                                 "linkedServiceName": {
-                                    "referenceName": "refdataarch2storage",
+                                    "referenceName": "blobLinkedService",
                                     "type": "LinkedServiceReference"
                                 },
                                 "path": "adf-copy"
@@ -1191,7 +1190,7 @@
                             "storedProcedureName": "[concat(variables('leftBracket'), 'integration].[MergeEmployeePhoto]')]"
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     }
@@ -1204,13 +1203,13 @@
             },
             "dependsOn": [
                 "[concat(variables('factoryId'), '/datasets/ETLCutoff')]",
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]",
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]",
                 "[concat(variables('factoryId'), '/datasets/Lineage')]",
                 "[concat(variables('factoryId'), '/datasets/EmployeeChanges')]",
                 "[concat(variables('factoryId'), '/datasets/EmployeeChangesDW')]",
                 "[concat(variables('factoryId'), '/datasets/EmployeePhotoChanges')]",
                 "[concat(variables('factoryId'), '/datasets/EmployeePhotoChangesDW')]",
-                "[concat(variables('factoryId'), '/linkedServices/refdataarch2storage')]"
+                "[concat(variables('factoryId'), '/linkedServices/blobLinkedService')]"
             ]
         },
         {
@@ -1282,7 +1281,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -1366,7 +1365,7 @@
                             "enableStaging": true,
                             "stagingSettings": {
                                 "linkedServiceName": {
-                                    "referenceName": "refdataarch2storage",
+                                    "referenceName": "blobLinkedService",
                                     "type": "LinkedServiceReference"
                                 },
                                 "path": "adf-copy"
@@ -1418,7 +1417,7 @@
                             }
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -1473,7 +1472,7 @@
                             "enableStaging": true,
                             "stagingSettings": {
                                 "linkedServiceName": {
-                                    "referenceName": "refdataarch2storage",
+                                    "referenceName": "blobLinkedService",
                                     "type": "LinkedServiceReference"
                                 },
                                 "path": "adf-copy"
@@ -1522,7 +1521,7 @@
                             "storedProcedureName": "[concat(variables('leftBracket'), 'integration].[MergeStockItemPhoto]')]"
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     }
@@ -1535,13 +1534,13 @@
             },
             "dependsOn": [
                 "[concat(variables('factoryId'), '/datasets/ETLCutoff')]",
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]",
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]",
                 "[concat(variables('factoryId'), '/datasets/Lineage')]",
                 "[concat(variables('factoryId'), '/datasets/StockItemChanges')]",
                 "[concat(variables('factoryId'), '/datasets/StockItemChangesDW')]",
                 "[concat(variables('factoryId'), '/datasets/StockItemPhotoChanges')]",
                 "[concat(variables('factoryId'), '/datasets/StockItemPhotoChangesDW')]",
-                "[concat(variables('factoryId'), '/linkedServices/refdataarch2storage')]"
+                "[concat(variables('factoryId'), '/linkedServices/blobLinkedService')]"
             ]
         },
         {
@@ -1728,7 +1727,7 @@
                             "storedProcedureName": "[concat(variables('leftBracket'), 'integration].[MigrateExternalCityPopulationData]')]"
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     },
@@ -1753,14 +1752,14 @@
                             "storedProcedureName": "[concat(variables('leftBracket'), 'integration].[MigrateStagedPopulationData]')]"
                         },
                         "linkedServiceName": {
-                            "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                            "referenceName": "sinkDWLinkedService",
                             "type": "LinkedServiceReference"
                         }
                     }
                 ]
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -1769,7 +1768,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -1832,7 +1831,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -1841,7 +1840,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
@@ -1900,11 +1899,11 @@
                     }
                 ],
                 "typeProperties": {
-                    "tableName": "dummyCityChanges"
+                    "tableName": "DummyCityChanges"
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
@@ -1913,7 +1912,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
@@ -1940,11 +1939,11 @@
                     }
                 ],
                 "typeProperties": {
-                    "tableName": "dummyCityLocationChanges"
+                    "tableName": "DummyCityLocationChanges"
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
@@ -1953,7 +1952,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -1984,7 +1983,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -1993,7 +1992,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
@@ -2083,7 +2082,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
@@ -2092,7 +2091,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -2183,7 +2182,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -2192,7 +2191,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
@@ -2239,7 +2238,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
@@ -2248,7 +2247,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -2295,7 +2294,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -2304,7 +2303,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
@@ -2343,7 +2342,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
@@ -2352,7 +2351,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -2391,7 +2390,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -2400,7 +2399,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
@@ -2483,7 +2482,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
@@ -2492,7 +2491,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -2575,7 +2574,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -2584,7 +2583,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
@@ -2615,7 +2614,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
@@ -2624,7 +2623,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -2655,7 +2654,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -2664,7 +2663,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
@@ -2695,7 +2694,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
@@ -2704,7 +2703,7 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SqlDWDeliveryMethodsLinkedService",
+                    "referenceName": "sinkDWLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "AzureSqlDWTable",
@@ -2735,7 +2734,7 @@
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SqlDWDeliveryMethodsLinkedService')]"
+                "[concat(variables('factoryId'), '/linkedServices/sinkDWLinkedService')]"
             ]
         },
         {
@@ -2744,31 +2743,31 @@
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "linkedServiceName": {
-                    "referenceName": "SourceSqlDataBase",
+                    "referenceName": "sourceDBLinkedService",
                     "type": "LinkedServiceReference"
                 },
                 "type": "SqlServerTable",
                 "typeProperties": {
-                    "tableName": "Dummy"
+                    "tableName": "DummyCurrentCutoff"
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/SourceSqlDataBase')]"
+                "[concat(variables('factoryId'), '/linkedServices/sourceDBLinkedService')]"
             ]
         },
         {
-            "name": "[concat(parameters('factoryName'), '/refdataarch2intergrationruntime')]",
+            "name": "[concat(parameters('factoryName'), '/sourceIntegrationRuntime')]",
             "type": "Microsoft.DataFactory/factories/integrationRuntimes",
             "apiVersion": "2017-09-01-preview",
             "properties": {
                 "type": "SelfHosted",
-                "description": "selfhosted run time for refdataarch2-adf",
+                "description": "selfhosted run time",
                 "typeProperties": {}
             },
             "dependsOn": []
         },
         {
-            "name": "[concat(parameters('factoryName'), '/SourceSqlDataBase')]",
+            "name": "[concat(parameters('factoryName'), '/sourceDBLinkedService')]",
             "type": "Microsoft.DataFactory/factories/linkedServices",
             "apiVersion": "2017-09-01-preview",
             "properties": {
@@ -2776,22 +2775,22 @@
                 "typeProperties": {
                     "connectionString": {
                         "type": "SecureString",
-                        "value": "[parameters('SourceSqlDataBase_connectionString')]"
+                        "value": "[parameters('sourceDBConnectionString')]"
                     },
-                    "userName": "[parameters('SourceSqlDataBase_properties_typeProperties_userName')]",
+                    "userName": "[parameters('sourceDBUserName')]",
                     "encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIwNjQzMWJiNy04YmM3LTQ1MDItYjk5OS1jYTcyM2Y4MWMyZjciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
                 },
                 "connectVia": {
-                    "referenceName": "refdataarch2intergrationruntime",
+                    "referenceName": "sourceIntegrationRuntime",
                     "type": "IntegrationRuntimeReference"
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/integrationRuntimes/refdataarch2intergrationruntime')]"
+                "[concat(variables('factoryId'), '/integrationRuntimes/sourceIntegrationRuntime')]"
             ]
         },
         {
-            "name": "[concat(parameters('factoryName'), '/SqlDWDeliveryMethodsLinkedService')]",
+            "name": "[concat(parameters('factoryName'), '/sinkDWLinkedService')]",
             "type": "Microsoft.DataFactory/factories/linkedServices",
             "apiVersion": "2017-09-01-preview",
             "properties": {
@@ -2799,14 +2798,14 @@
                 "typeProperties": {
                     "connectionString": {
                         "type": "SecureString",
-                        "value": "[parameters('SqlDWDeliveryMethodsLinkedService_connectionString')]"
+                        "value": "[parameters('sinkDWConnectionString')]"
                     }
                 }
             },
             "dependsOn": []
         },
         {
-            "name": "[concat(parameters('factoryName'), '/refdataarch2storage')]",
+            "name": "[concat(parameters('factoryName'), '/blobLinkedService')]",
             "type": "Microsoft.DataFactory/factories/linkedServices",
             "apiVersion": "2017-09-01-preview",
             "properties": {
@@ -2814,17 +2813,17 @@
                 "typeProperties": {
                     "connectionString": {
                         "type": "SecureString",
-                        "value": "[parameters('refdataarch2storage_connectionString')]"
+                        "value": "[parameters('blobConnectionString')]"
                     },
                     "encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhNjc1ODE2Yi0yZDRmLTRjN2ItOTgyMC04MjRmMjc0MTMxYzIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
                 },
                 "connectVia": {
-                    "referenceName": "refdataarch2intergrationruntime",
+                    "referenceName": "sourceIntegrationRuntime",
                     "type": "IntegrationRuntimeReference"
                 }
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/integrationRuntimes/refdataarch2intergrationruntime')]"
+                "[concat(variables('factoryId'), '/integrationRuntimes/sourceIntegrationRuntime')]"
             ]
         }
     ]
