@@ -116,7 +116,7 @@
                                           "userName": ".\\adminUser",
                                           "password": "testPassw0rd!23"
                                         },
-                                        "IntegrationRuntimeGatewayKey": "IR@f598f095-fdfc-4c74-9d44-f78739768f34@pnp-sql-adf2@eu@hPgggjWKwyqBTMgDOsh1e1tuWbYNGc2uuJQvYmolReY="
+                                        "IntegrationRuntimeGatewayKey": ""
                                     }
                                 }
                             }
