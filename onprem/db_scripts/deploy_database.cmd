@@ -4,6 +4,8 @@ REM Utility Stored Procedures
 sqlcmd %* -b -i "[dbo].[DropProcedureIfExists].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 
+sqlcmd %* -b -i "[Integration].[Split_VarbinaryFunc].sql"
+IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "city\[Integration].[GetCityGeographyUpdates].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "city\[Integration].[GetCityUpdates].sql"

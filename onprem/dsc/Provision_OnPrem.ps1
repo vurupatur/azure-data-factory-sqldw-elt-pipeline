@@ -238,6 +238,7 @@ Configuration Provision_OnPrem
                 Restore-SqlDatabase -ServerInstance $env:ComputerName -Database "$Using:databaseName" -BackupFile $Using:wwiBakPath -RelocateFile $relocateFiles
                 $ScriptsFolder = Join-Path $Using:projectFolder "\data\enterprise_bi_sqldw_advanced\onprem\db_scripts\"
                 Invoke-SqlCmd -ServerInstance $env:ComputerName -Database "$Using:databaseName" -InputFile (Join-Path $ScriptsFolder "[dbo].[DropProcedureIfExists].sql") -Verbose
+                Invoke-SqlCmd -ServerInstance $env:ComputerName -Database "$Using:databaseName" -InputFile (Join-Path $ScriptsFolder "[Integration].[Split_VarbinaryFunc].sql") -Verbose
                 Invoke-Sqlcmd -ServerInstance $env:ComputerName -Database "$Using:databaseName" -InputFile (Join-Path $ScriptsFolder "city\[Integration].[GetCityGeographyUpdates].sql") -Verbose
                 Invoke-Sqlcmd -ServerInstance $env:ComputerName -Database "$Using:databaseName" -InputFile (Join-Path $ScriptsFolder "city\[Integration].[GetCityUpdates].sql") -Verbose
                 Invoke-Sqlcmd -ServerInstance $env:ComputerName -Database "$Using:databaseName" -InputFile (Join-Path $ScriptsFolder "customers\[Integration].[GetCustomerUpdates].sql") -Verbose
