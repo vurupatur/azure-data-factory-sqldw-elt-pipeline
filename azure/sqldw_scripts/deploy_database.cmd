@@ -10,6 +10,8 @@ REM Schema setup
 sqlcmd %* -b -i "schemasetup.sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 
+
+
 REM date dimension setup
 sqlcmd %* -b -i "datedimensionsetup.sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
@@ -20,6 +22,10 @@ IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "[Integration].[CreateLineage].sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 sqlcmd %* -b -i "[Integration].[ETLCutoff].sql"
+IF %ERRORLEVEL% NEQ 0 EXIT /B 1
+
+REM etl-cutoff-setup
+sqlcmd %* -b -i "etl-cutoff-setup.sql"
 IF %ERRORLEVEL% NEQ 0 EXIT /B 1
 
 REM City setup
