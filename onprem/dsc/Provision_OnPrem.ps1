@@ -322,6 +322,35 @@ Configuration Provision_OnPrem
             DependsOn = "[Script]SsdtInstall"
         }
 
+        # Install Power BI Desktop
+        Script PowerBIDesktopInstall
+        {
+            GetScript = {
+                return @{Result=""}
+            }
+            SetScript = {
+                Write-Verbose "Installing Microsoft Power BI Desktop (x64)"
+                Start-Process -Wait -FilePath "c:\Windows\System32\msiexec.exe" `
+                    -ArgumentList "/package `"$Using:powerBIMsiPath`"", "/qn", "/log `"$Using:powerBILogPath`"", "/norestart", "ACCEPT_EULA=1"
+            }
+            TestScript = {
+                Write-Verbose "Finding Microsoft Power BI Desktop (x64)"
+                $exists = Test-Path "C:\Program Files\Microsoft Power BI Desktop"
+                if ($exists) {
+                    Write-Verbose "Microsoft Power BI Desktop (x64) found"
+                }
+
+                return $exists
+            }
+            DependsOn = @("[Script]UnmountSsdtIso", "[xRemoteFile]PowerBIDownload", "[File]LogsFolder")
+        }
+
+        xPendingReboot RebootAfterInstalls
+        {
+            Name = "RebootAfterInstalls"
+            DependsOn = "[Script]PowerBIDesktopInstall"
+        }
+
         # Install Microsoft Integration Runtime
         Script IntegrationRuntimeInstall
         {
@@ -344,36 +373,7 @@ Configuration Provision_OnPrem
 
                 return $exists
             }
-            DependsOn = @("[Script]UnmountSsdtIso", "[xRemoteFile]IntegrationRuntimeDownload", "[File]LogsFolder")
-        }
-
-        # Install Power BI Desktop
-        Script PowerBIDesktopInstall
-        {
-            GetScript = {
-                return @{Result=""}
-            }
-            SetScript = {
-                Write-Verbose "Installing Microsoft Power BI Desktop (x64)"
-                Start-Process -Wait -FilePath "c:\Windows\System32\msiexec.exe" `
-                    -ArgumentList "/package `"$Using:powerBIMsiPath`"", "/qn", "/log `"$Using:powerBILogPath`"", "/norestart", "ACCEPT_EULA=1"
-            }
-            TestScript = {
-                Write-Verbose "Finding Microsoft Power BI Desktop (x64)"
-                $exists = Test-Path "C:\Program Files\Microsoft Power BI Desktop"
-                if ($exists) {
-                    Write-Verbose "Microsoft Power BI Desktop (x64) found"
-                }
-
-                return $exists
-            }
-            DependsOn = @("[Script]IntegrationRuntimeInstall", "[xRemoteFile]PowerBIDownload", "[File]LogsFolder")
-        }
-
-        xPendingReboot RebootAfterInstalls
-        {
-            Name = "RebootAfterInstalls"
-            DependsOn = "[Script]PowerBIDesktopInstall"
+            DependsOn = @("[xPendingReboot]RebootAfterInstalls", "[xRemoteFile]IntegrationRuntimeDownload", "[File]LogsFolder")
         }
     }
 }
