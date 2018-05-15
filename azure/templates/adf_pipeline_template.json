@@ -2823,8 +2823,7 @@
                             "connectionString": {
                                 "type": "SecureString",
                                 "value": "[parameters('sourceDBConnectionString')]"
-                            },
-                            "userName": "[parameters('sourceDBUserName')]"
+                            }
                         },
                         "connectVia": {
                             "referenceName": "sourceIntegrationRuntime",
