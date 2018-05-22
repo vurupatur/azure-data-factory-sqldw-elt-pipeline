@@ -1741,6 +1741,31 @@
                                         }
                                     }
                                 }
+                            },
+                            {
+                                "name": "PopulationPipeline",
+                                "type": "ExecutePipeline",
+                                "dependsOn": [
+                                    {
+                                        "activity": "SalesPipeline",
+                                        "dependencyConditions": [
+                                            "Succeeded"
+                                        ]
+                                    }
+                                ],
+                                "typeProperties": {
+                                    "pipeline": {
+                                        "referenceName": "CityPopulationPipeline",
+                                        "type": "PipelineReference"
+                                    },
+                                    "waitOnCompletion": true,
+                                    "parameters": {
+                                        "CutoffTime": {
+                                            "value": "@activity('GetCutOff').output.firstRow.CurrentCutoff",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
                             }
                         ]
                     },
@@ -1751,7 +1776,8 @@
                         "[concat(variables('factoryId'), '/pipelines/CityPipeline')]",
                         "[concat(variables('factoryId'), '/pipelines/CustomerPipeline')]",
                         "[concat(variables('factoryId'), '/pipelines/EmployeePipeline')]",
-                        "[concat(variables('factoryId'), '/pipelines/StockItemsPipeline')]"
+                        "[concat(variables('factoryId'), '/pipelines/StockItemsPipeline')]",
+                        "[concat(variables('factoryId'), '/pipelines/CityPopulationPipeline')]"
                     ]
                 },
                 {
