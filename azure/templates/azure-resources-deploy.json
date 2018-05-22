@@ -46,7 +46,7 @@
         },
         "analysisServerSKU": {
             "type":"string",
-            "defaultValue": "D1",
+            "defaultValue": "B1",
             "metadata": {
                 "description": "Analysis Server Name"
             }
