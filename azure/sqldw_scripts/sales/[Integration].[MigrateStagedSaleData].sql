@@ -19,26 +19,24 @@ BEGIN
 
 
 	CREATE TABLE CityHolder
-	WITH (HEAP , DISTRIBUTION = HASH([WWI City ID]))
+	WITH (HEAP , DISTRIBUTION = HASH([WWI Invoice ID]))
 	AS
-
-	SELECT c.[WWI City ID],c.[Valid From],s1.[WWI Invoice ID],ROW_NUMBER() OVER (PARTITION BY c.[WWI City ID],s1.[WWI Invoice ID] ORDER BY c.[Valid From] DESC) as rn
-	FROM [Dimension].[City] AS c
-	INNER JOIN [Integration].[Sale_Staging] s1
-	ON c.[WWI City ID] = s1.[WWI City ID]
-	AND s1.[Last Modified When] > c.[Valid From]
-	AND s1.[Last Modified When] <= c.[Valid To]
-
-
+	SELECT DISTINCT s1.[WWI Invoice ID] AS [WWI Invoice ID],
+	                c.[City Key] AS [City Key]
+      FROM [Integration].[Sale_Staging] s1
+     CROSS APPLY (
+                   SELECT TOP 1 [City Key]
+			         FROM [Dimension].[City]
+				    WHERE [WWI City ID] = s1.[WWI City ID]
+				      AND s1.[Last Modified When] > [Valid From]
+	                  AND s1.[Last Modified When] <= [Valid To]
+				    ORDER BY [Valid From], [City Key] DESC
+ 			     ) c
 
 	UPDATE [Integration].[Sale_Staging]
-	SET [Integration].[Sale_Staging].[WWI City ID] =  CityHolder.[WWI City ID]
-	FROM CityHolder
-	WHERE CityHolder.rn = 1
-	AND [Integration].[Sale_Staging].[WWI Invoice ID] = CityHolder.[WWI Invoice ID]
-	AND [Integration].[Sale_Staging].[Last Modified When] >= CityHolder.[Valid From]
-
-
+	   SET [Integration].[Sale_Staging].[City Key] = CityHolder.[City Key]
+	  FROM CityHolder
+	 WHERE [Integration].[Sale_Staging].[WWI Invoice ID] = CityHolder.[WWI Invoice ID]
 
 	DROP TABLE CityHolder
 
@@ -159,7 +157,8 @@ BEGIN
     [WWI Stock Item ID],
     [WWI Saleperson ID],
     [Last Modified When],
-    [Lineage Key]
+    [Lineage Key],
+	[City Key]
   )
   SELECT 
   [Invoice Date Key],
@@ -182,7 +181,8 @@ BEGIN
   [WWI Stock Item ID],
   [WWI Saleperson ID],
   [Last Modified When],
-  @Lineage
+  @Lineage,
+  [City Key]
 FROM [Integration].[Sale_Staging]
 
 UPDATE [Integration].[Lineage]
@@ -193,6 +193,6 @@ UPDATE [Integration].[ETLCutoff]
 SET SystemCutoffTime = @SystemCutOffTime
 WHERE TableName = '[Fact].[Sale]'
 
-TRUNCATE Table [Integration].[Sale_Staging]
+TRUNCATE TABLE [Integration].[Sale_Staging]
 
 END

@@ -19,6 +19,7 @@ N'
   [WWI Bill To Customer ID] int,
   [WWI Stock Item ID] int,
   [WWI Saleperson ID] int,
-  [Last Modified When] datetime2(7)
+  [Last Modified When] datetime2(7),
+  [City Key] int
 ',
 'HEAP'

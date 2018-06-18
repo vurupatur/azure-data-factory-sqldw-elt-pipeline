@@ -20,7 +20,8 @@ N'
   [WWI Stock Item ID] int,
   [WWI Saleperson ID] int,
   [Last Modified When] datetime2(7),
-  [Lineage Key] int
+  [Lineage Key] int,
+  [City Key] int
 ',
 'DISTRIBUTION = ROUND_ROBIN,
   CLUSTERED COLUMNSTORE INDEX'
