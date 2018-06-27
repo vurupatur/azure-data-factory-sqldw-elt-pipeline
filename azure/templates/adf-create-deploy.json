@@ -1,0 +1,49 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory Name"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "East US"
+        },
+        "apiVersion": {
+            "type": "string",
+            "defaultValue": "2017-09-01-preview"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]",
+        "leftBracket": "["
+    },
+
+    "resources": [
+        {
+            "apiVersion": "[parameters('apiVersion')]",
+            "name": "[parameters('factoryName')]",
+            "location": "[parameters('location')]",
+            "type": "Microsoft.DataFactory/factories",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+
+            "resources":[
+                {
+                    "name": "[concat(parameters('factoryName'), '/sourceIntegrationRuntime')]",
+                    "type": "Microsoft.DataFactory/factories/integrationRuntimes",
+                    "apiVersion": "[parameters('apiVersion')]",
+                    "properties": {
+                        "type": "SelfHosted",
+                        "description": "selfhosted run time",
+                        "typeProperties": {}
+                    },
+                    "dependsOn": [ "[parameters('factoryName')]"]
+                }
+            ]
+        }
+    ]
+}
