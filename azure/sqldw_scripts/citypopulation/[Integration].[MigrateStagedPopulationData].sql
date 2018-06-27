@@ -8,30 +8,24 @@ AS
 BEGIN
 	
 	TRUNCATE TABLE [Fact].[CityPopulation]
-
-
-	CREATE TABLE CityHolder
-	WITH (HEAP , DISTRIBUTION = HASH([WWI City ID]))
-	AS
-
-	SELECT c.[WWI City ID],c.[StateProvinceCode],c.[Valid From],c.[City],ROW_NUMBER() OVER (PARTITION BY c.[WWI City ID] ORDER BY c.[Valid From] DESC) as rn
-	FROM [Dimension].[City] AS c
-
-
 	
 	INSERT INTO [Fact].[CityPopulation]
-	SELECT
-	cd.[WWI City ID],
-	cps.[YearNumber], 
-	cps.[Population]
+	SELECT     
+		c.[WWI City ID] as [WWI City ID],
+		cps.[YearNumber] as [YearNumber], 
+		cps.[Population] as [Population],
+		c.[City Key] as [City Key]
 	FROM [Integration].[CityPopulation_Staging] cps
-	INNER JOIN CityHolder cd
-	on cd.rn = 1
-	and cps.[StateProvinceCode] = cd.[StateProvinceCode]
-	and cps.CityName =  cd.City
-
-
-	DROP TABLE CityHolder
+	CROSS APPLY (
+					SELECT  TOP 1 cd.[City Key] ,cd.[WWI City ID]
+					FROM [Dimension].[City] cd
+					WHERE cps.[StateProvinceCode] = cd.[StateProvinceCode] 
+					AND cps.[CityName] = cd.[City]
+					AND   YEAR(cd.[Valid To]) >= cps.[YearNumber] 
+					AND   YEAR(cd.[Valid From]) <= cps.[YearNumber]  
+					ORDER BY [Valid From] ASC
+				)c
+		
 
 
 
