@@ -8,7 +8,7 @@ AS
 BEGIN
 	
 	TRUNCATE TABLE [Fact].[CityPopulation]
-	
+
 	INSERT INTO [Fact].[CityPopulation]
 	SELECT     
 		c.[WWI City ID] as [WWI City ID],
@@ -25,8 +25,5 @@ BEGIN
 					AND   YEAR(cd.[Valid From]) <= cps.[YearNumber]  
 					ORDER BY [Valid From] ASC
 				)c
-		
-
-
 
 END
